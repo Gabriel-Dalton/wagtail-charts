@@ -1,4 +1,4 @@
-{% load wagtailcharts_tags %}
+{% load wagtailcharts_tags i18n %}
 {% comment %}
     This is the template for the ChartBlock. It is a simple HTML template that renders a canvas element with the chart data.
     You will probably want to override this template by creating a new template in your project with the same name and template path.
@@ -26,4 +26,22 @@
             {% if self.title %}with the title {{ self.title }}{% endif %}
         </p>
     </canvas>
+{% endif %}
+{% if self.chart_type == "bar" %}
+    {% with table=self.datasets|bar_data_table %}
+        {% if table %}
+            <details>
+                <summary>{% translate "View chart data" %}</summary>
+                <table>
+                    {% if self.title %}<caption>{{ self.title }}</caption>{% endif %}
+                    <thead><tr><td></td>{% for label in table.headers %}<th scope="col">{{ label }}</th>{% endfor %}</tr></thead>
+                    <tbody>
+                        {% for series, values in table.rows %}
+                            <tr><th scope="row">{{ series }}</th>{% for value in values %}<td>{{ value|default_if_none:"" }}</td>{% endfor %}</tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </details>
+        {% endif %}
+    {% endwith %}
 {% endif %}
