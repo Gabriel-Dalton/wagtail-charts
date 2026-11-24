@@ -104,3 +104,19 @@ def test_render_has_no_stray_markup_inside_canvas():
 
     assert not re.search(r">\s*>\s*<p>", html)
     assert "data-callback" not in html
+
+
+def test_bar_chart_exposes_data_with_series_and_year_headers():
+    from bs4 import BeautifulSoup
+
+    datasets = json.dumps({
+        "data": [["2024", "2025"], [12, 27], [0, 18]],
+        "options": {"title": ["Year", "Received", "Approved"]},
+    })
+    value = make_value(datasets=datasets)
+    html = BeautifulSoup(ChartBlock().render(value), "html.parser")
+    assert html.select_one("details > summary").get_text(strip=True) == "View chart data"
+    assert [th.text for th in html.select('th[scope="col"]')] == ["2024", "2025"]
+    rows = html.select("tbody tr")
+    assert [row.select_one('th[scope="row"]').text for row in rows] == ["Received", "Approved"]
+    assert [[td.text for td in row.select("td")] for row in rows] == [["12", "27"], ["0", "18"]]
