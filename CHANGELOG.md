@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.1.1 (unreleased)
+## 0.2.0 (2026-11-25)
+
+Accessibility:
+
+- Vertical bar charts now render their values in a keyboard-accessible data table inside a
+  "View chart data" disclosure, with series and category headers.
 
 Security and maintenance (AB#45699):
 
